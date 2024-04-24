@@ -1,15 +1,48 @@
 version: '3.1'
 services:
   stats-server:
+    build: explore-with-me-stats-server
+    container_name: stats-server
     ports:
       - "9090:9090"
+    depends_on:
+      stats-db
+    environment:
+      - MAIN_SERVICE_URL = http://server:8080
 
-  stats-db:
-    image: postgres:14-alpine
 
-  ewm-service:
+
+  main-service:
+    build: explore-with-me-main-service
+    container_name: main-service
     ports:
       - "8080:8080"
+    depends_on:
+      main-db
 
-  ewm-db:
+  main-db:
     image: postgres:14-alpine
+    container_name: main-db
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=later
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      #- TZ=Europe/Moscow
+    volumes:
+      - /var/lib/postgresql/data/
+
+
+    stats-db:
+      image: postgres:14-alpine
+      container_name: stats-db
+      ports:
+        - "6541:5432"
+      environment:
+        - POSTGRES_DB=later
+        - POSTGRES_USER=root
+        - POSTGRES_PASSWORD=root
+        #- TZ=Europe/Moscow
+      volumes:
+        - /var/lib/postgresql/data/
