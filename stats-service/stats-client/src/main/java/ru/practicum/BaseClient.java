@@ -12,11 +12,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
-public class BaseClient
-{
+public class BaseClient {
     RestTemplate rest;
 
-    public BaseClient (RestTemplate rest) {
+    public BaseClient(RestTemplate rest) {
         this.rest = rest;
     }
 
@@ -36,9 +35,8 @@ public class BaseClient
 
 
     protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {  //дописать
-        return makeAndSendRequest(HttpMethod.GET, path,  parameters, null);
+        return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }
-
 
 
     protected <T> ResponseEntity<Object> post(String path, T body, @Nullable Map<String, Object> parameters) {  //дописать

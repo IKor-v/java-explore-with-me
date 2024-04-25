@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse validationException(final ValidationException e){
+    public ErrorResponse validationException(final ValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

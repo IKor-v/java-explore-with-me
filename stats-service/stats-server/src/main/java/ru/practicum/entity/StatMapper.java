@@ -6,7 +6,7 @@ import ru.practicum.StatDtoOut;
 
 @UtilityClass
 public class StatMapper {
-    public Stat toStat(StatDto statDto){
+    public Stat toStat(StatDto statDto) {
         return Stat.builder()
                 .app(statDto.getApp())
                 .uri(statDto.getUri())
@@ -15,7 +15,7 @@ public class StatMapper {
                 .build();
     }
 
-    public StatDtoOut toStatDtoOut(Stat stat, int hits){
+    public StatDtoOut toStatDtoOut(Stat stat, int hits) {
         return StatDtoOut.builder()
                 .app(stat.getApp())
                 .uri(stat.getUri())
@@ -23,7 +23,7 @@ public class StatMapper {
                 .build();
     }
 
-    public StatDtoOut toStatDtoOut(StatDto statDto, int hits){
+    public StatDtoOut toStatDtoOut(StatDto statDto, int hits) {
         return StatDtoOut.builder()
                 .app(statDto.getApp())
                 .uri(statDto.getUri())
@@ -31,7 +31,7 @@ public class StatMapper {
                 .build();
     }
 
-    public StatDto toStatDto(Stat stat){
+    public StatDto toStatDto(Stat stat) {
         return StatDto.builder()
                 .app(stat.getApp())
                 .uri(stat.getUri())

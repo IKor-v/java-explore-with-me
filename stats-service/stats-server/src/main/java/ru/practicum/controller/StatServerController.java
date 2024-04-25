@@ -2,6 +2,7 @@ package ru.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.StatDto;
 import ru.practicum.StatDtoOut;
 import ru.practicum.service.StatServerService;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +28,7 @@ public class StatServerController {
     }
 
     @GetMapping("/stats")   // stats?start="2024-01-01 01:01:01"&end="2025-01-01 01:01:01"
-    public ResponseEntity<List<StatDtoOut>> getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime start,
+    public ResponseEntity<List<StatDtoOut>> getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                      @RequestParam(defaultValue = "") List<String> uris,
                                                      @RequestParam(defaultValue = "false") boolean unique) {
