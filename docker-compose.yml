@@ -1,15 +1,65 @@
-version: '3.1'
+version: '3.8'
 services:
   stats-server:
+    build: stats-service/stats-server
+    image: explore-with-me-stats-server
+    container_name: stats-server
     ports:
       - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      - DB_NAME=statsdb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - DB_HOST=stats-db
+      - DB_PORT=5432
+      #- TZ=Europe/Moscow
 
   stats-db:
-    image: postgres:14-alpine
+    image: postgres:13.7-alpine
+    container_name: stats-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=statsdb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      #- TZ=Europe/Moscow
+    volumes:
+      - /var/lib/postgresql/data2/
 
-  ewm-service:
+
+
+  main-service:
+    build: main-service
+    image: explore-with-me-main-service
+    container_name: main-service
     ports:
       - "8080:8080"
+    depends_on:
+      - main-db
+    environment:
+      - DB_NAME=maindb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - DB_HOST=main-db
+      - DB_PORT=5431
+      #- TZ=Europe/Moscow
 
-  ewm-db:
-    image: postgres:14-alpine
+  main-db:
+    image: postgres:13.7-alpine
+    container_name: main-db
+    ports:
+      - "5431:5431"
+    environment:
+      - POSTGRES_DB=maindb
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      #- TZ=Europe/Moscow
+    volumes:
+      - /var/lib/postgresql/data1/
+
+
+
+
