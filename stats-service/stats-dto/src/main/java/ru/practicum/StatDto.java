@@ -1,7 +1,6 @@
 package ru.practicum;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatDto
-{
+public class StatDto {
     @NotBlank
     private String app;
     @NotBlank

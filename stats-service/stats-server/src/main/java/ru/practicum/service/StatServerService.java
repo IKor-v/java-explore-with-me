@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatServerService {
-     ResponseEntity<List<StatDtoOut>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
-     ResponseEntity<StatDto> postStats(StatDto statDto);
+    ResponseEntity<List<StatDtoOut>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
+
+    ResponseEntity<StatDto> postStats(StatDto statDto);
 }

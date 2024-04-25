@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatDto;
 import ru.practicum.StatDtoOut;
 import ru.practicum.entity.Stat;
 import ru.practicum.entity.StatMapper;
 import ru.practicum.repository.StatsRepository;
-
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -22,7 +20,7 @@ import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
-public class StatServerServiceImpl implements StatServerService{
+public class StatServerServiceImpl implements StatServerService {
     private final StatsRepository repository;
 
     @Autowired
@@ -35,12 +33,12 @@ public class StatServerServiceImpl implements StatServerService{
         if ((start == null) || (end == null)) {
             throw new ValidationException("Промежуток времени не может быть пустым.");
         }
-        if(start.isAfter(end)){
+        if (start.isAfter(end)) {
             throw new ValidationException("Начало промежутка не может быть позже его окончания.");
         }
         List<Stat> response;
         List<StatDtoOut> result;
-        if ((uris == null) || (uris.isEmpty())){
+        if ((uris == null) || (uris.isEmpty())) {
             if (unique) {
                 result = repository.findByTimestampBetweenAndUniqueIp(start, end);
             } else {
@@ -77,7 +75,7 @@ public class StatServerServiceImpl implements StatServerService{
             }
         }
         List<StatDtoOut> result = new ArrayList<>();
-        for (Map.Entry<StatDto,Integer> statDto: statsAndCount.entrySet()){
+        for (Map.Entry<StatDto, Integer> statDto : statsAndCount.entrySet()) {
             result.add(StatMapper.toStatDtoOut(statDto.getKey(), statDto.getValue()));
         }
         return result;
