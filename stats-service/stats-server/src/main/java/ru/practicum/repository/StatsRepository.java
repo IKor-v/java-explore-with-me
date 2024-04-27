@@ -2,14 +2,12 @@ package ru.practicum.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import ru.practicum.StatDtoOut;
 import ru.practicum.entity.Stat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public interface StatsRepository extends JpaRepository<Stat, Long> {
 
     List<Stat> findByTimestampAfter(LocalDateTime start);

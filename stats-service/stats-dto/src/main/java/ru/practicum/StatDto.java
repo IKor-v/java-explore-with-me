@@ -15,9 +15,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 public class StatDto {
-    @NotBlank
+    @NotBlank(message = "App can't be an empty.")
     private String app;
-    @NotBlank
+    @NotBlank(message = "Uri can't be an empty.")
     private String uri;
     private String ip;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)

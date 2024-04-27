@@ -1,8 +1,6 @@
 package ru.practicum.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatDto;
@@ -29,7 +27,7 @@ public class StatServerServiceImpl implements StatServerService {
     }
 
     @Override
-    public ResponseEntity<List<StatDtoOut>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+    public List<StatDtoOut> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         if ((start == null) || (end == null)) {
             throw new ValidationException("Промежуток времени не может быть пустым.");
         }
@@ -54,14 +52,14 @@ public class StatServerServiceImpl implements StatServerService {
             }
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return result;
     }
 
 
     @Override
     @Transactional
-    public ResponseEntity<StatDto> postStats(StatDto statDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(StatMapper.toStatDto(repository.save(StatMapper.toStat(statDto))));
+    public StatDto postStats(StatDto statDto) {
+        return StatMapper.toStatDto(repository.save(StatMapper.toStat(statDto)));
     }
 
     private List<StatDtoOut> getStatDtoOut(List<Stat> response) {
