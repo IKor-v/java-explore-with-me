@@ -10,9 +10,12 @@ import ru.practicum.users.dto.UserMapper;
 import ru.practicum.users.entity.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public class EventMapper {
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public Event toEvent(EventDto eventDto) {
         return Event.builder()
                 .id(eventDto.getId())
@@ -20,22 +23,19 @@ public class EventMapper {
                 .annotation(eventDto.getAnnotation())
                 .category(CategoryMapper.toCategory(eventDto.getCategory()))
                 .confirmedRequests(eventDto.getConfirmedRequests())
-                .eventDate(eventDto.getEventDate())
+                .eventDate(LocalDateTime.parse(eventDto.getEventDate(), formatter))
                 .initiator(UserMapper.toUser(eventDto.getInitiator()))
                 .paid(eventDto.getPaid())
                 .build();
     }
 
     public EventDtoFull toAdminEventDto(Event event) {
-        return EventDtoFull.builder()
+        EventDtoFull result = EventDtoFull.builder()
                 .id(event.getId())
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .confirmedRequests(event.getConfirmedRequests())
-                .eventDate(event.getEventDate())
                 .paid(event.getPaid())
-                .createdOn(event.getCreatedOn())
-                .publishedOn(event.getPublishedOn())
                 .description(event.getDescription())
                 .participantLimit(event.getParticipantLimit())
                 .requestModeration(event.getRequestModeration())
@@ -44,6 +44,18 @@ public class EventMapper {
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .initiator(UserMapper.toUserDto(event.getInitiator()))
                 .build();
+
+
+        if (event.getEventDate() != null) {
+            result.setEventDate(event.getEventDate().format(formatter));
+        }
+        if (event.getCreatedOn() != null) {
+            result.setCreatedOn(event.getCreatedOn().format(formatter));
+        }
+        if (event.getPublishedOn() != null) {
+            result.setPublishedOn(event.getPublishedOn().format(formatter));
+        }
+        return result;
     }
 
     public EventDto toEventDto(Event event, Long views) {
@@ -53,7 +65,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .eventDate(event.getEventDate())
+                .eventDate(event.getEventDate().format(formatter))
                 .initiator(UserMapper.toUserDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .views(views)
@@ -67,7 +79,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .eventDate(event.getEventDate())
+                .eventDate(event.getEventDate().format(formatter))
                 .initiator(UserMapper.toUserDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .views(0L)

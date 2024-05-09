@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.events.dto.EventMapper;
 import ru.practicum.requests.entity.RequestsStatus;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 public class RequestDto {
     private Long id;
     private RequestsStatus status = RequestsStatus.PENDING;
-    private LocalDateTime created = LocalDateTime.now();
+    private String created = LocalDateTime.now().format(EventMapper.formatter);
     private Long event;
     private Long requester;
 }

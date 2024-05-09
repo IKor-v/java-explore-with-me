@@ -65,7 +65,7 @@ public class PrivateRequestsServiceImpl implements PrivateRequestsService {
         request.setEvent(event);
         request.setRequester(user);
 
-        if (!event.getRequestModeration()) {
+        if ((!event.getRequestModeration()) || (event.getParticipantLimit() == 0)) {
             request.setStatus(RequestsStatus.CONFIRMED);
             checkUpdateEvent = true;
         }

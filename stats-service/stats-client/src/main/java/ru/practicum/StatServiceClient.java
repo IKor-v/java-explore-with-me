@@ -37,7 +37,8 @@ public class StatServiceClient extends BaseClient {
         if (unique != null) {
             parameters.put("unique", unique);
         }
-        return get(String.format("/stats?start=%s&end=%s&uris=%s&unique=%b", start, end, String.join(",", uris), unique), parameters);
+        String s = String.format("/stats?start=%s&end=%s&uris=%s&unique=%b", start, end, String.join(",", uris), unique);
+        return get(s, parameters);
     }
 
 

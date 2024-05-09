@@ -109,6 +109,8 @@ public class StatsService {
                 result.put("end", event.getEventDate());
             }
         }
+        result.put("start", result.get("start").minusDays(1));
+        result.put("end", result.get("end").plusDays(1));
 
         return result;
     }
