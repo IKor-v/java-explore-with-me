@@ -56,7 +56,7 @@ public class AdminEventsServiceImpl implements AdminEventsService {
 
         Category category;
         LocationEvent location;
-        if ((eventDtoIn.getCategory() == null) || (oldEvent.getCategory().equals(eventDtoIn.getCategory()))) {
+        if ((eventDtoIn.getCategory() == null) || (oldEvent.getCategory().getId().equals(eventDtoIn.getCategory()))) {
             category = oldEvent.getCategory();
         } else {
             category = categoriesRepository.findById(eventDtoIn.getCategory()).orElseThrow(() -> new NotFoundException("Не найдена категория с id = " + eventDtoIn.getCategory()));
