@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.categories.entity.Category;
 import ru.practicum.categories.repository.CategoriesRepository;
-import ru.practicum.events.dto.ChangeRequestsListDto;
 import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.dto.EventDtoFull;
 import ru.practicum.events.dto.EventDtoIn;
@@ -22,9 +21,12 @@ import ru.practicum.events.repository.LocationRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
+import ru.practicum.requests.dto.EventRequestStatusUpdateDtoIn;
+import ru.practicum.requests.dto.EventRequestStatusUpdateDtoOut;
 import ru.practicum.requests.dto.RequestDto;
 import ru.practicum.requests.dto.RequestMapper;
 import ru.practicum.requests.entity.Request;
+import ru.practicum.requests.entity.RequestsStatus;
 import ru.practicum.requests.repository.RequestsRepository;
 import ru.practicum.stats.StatsService;
 import ru.practicum.users.entity.User;
@@ -166,12 +168,15 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
 
     @Override
     @Transactional
-    public List<RequestDto> changeResultStatus(ChangeRequestsListDto requestsList, Long userId, Long eventId) {
-        List<Request> requests = requestsRepository.findByIdIn(requestsList.getRequestIds());
-        List<Request> result = new ArrayList<>();
-        if ((requests == null) || (requests.size() < requestsList.getRequestIds().size())) {
-            throw new NotFoundException("Найдено запросов меньше, чем было указано.");
+    public EventRequestStatusUpdateDtoOut changeResultStatus(EventRequestStatusUpdateDtoIn requestsList, Long userId, Long eventId) {
+        if (requestsList == null) {
+            return null;
         }
+        List<Request> requests = requestsRepository.findByIdIn(requestsList.getRequestIds());
+        List<RequestDto> confirmedList = new ArrayList<>();
+        List<RequestDto> rejectedList = new ArrayList<>();
+
+        validStatusRequests(requests, requestsList);
 
         int countConfirmRequest = 0;
         int limitRequests = 0;
@@ -181,21 +186,45 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
             countConfirmRequest = event.getConfirmedRequests();
             limitRequests = event.getParticipantLimit();
         } else {
-            return List.of();
+            return null;
+        }
+        if ((limitRequests != 0) && (countConfirmRequest >= limitRequests)) {
+            throw new ConflictException("Количество мест ограничено, подтвердить указанные запросы не получится.");
         }
         for (Request request : requests) {
             if ((limitRequests != 0) && (countConfirmRequest >= limitRequests)) {
-                throw new ConflictException("Количество мест ограничено, подтвердить указанные запросы не получится.");
+                requestsList.setStatus(RequestsStatus.REJECTED);
             }
             request.setStatus(requestsList.getStatus());
-            result.add(request);
-            countConfirmRequest++;
+            if (request.getStatus().equals(RequestsStatus.CONFIRMED)) {
+                countConfirmRequest++;
+                confirmedList.add(RequestMapper.toRequestDto(request));
+            } else {
+                rejectedList.add(RequestMapper.toRequestDto(request));
+            }
         }
-        if (!result.isEmpty()) {
+
+
+        if (!confirmedList.isEmpty()) {
             event.setConfirmedRequests(countConfirmRequest);
             eventsRepository.save(event);
         }
-        return requestsRepository.saveAll(requests).stream().map(RequestMapper::toRequestDto).collect(Collectors.toList());
+        requestsRepository.saveAll(requests);
+        return EventRequestStatusUpdateDtoOut.builder()
+                .confirmedRequests(confirmedList)
+                .rejectedRequests(rejectedList)
+                .build();
+    }
+
+    private void validStatusRequests(List<Request> requests, EventRequestStatusUpdateDtoIn requestsList) {
+        if ((requests == null) || (requests.size() < requestsList.getRequestIds().size())) {
+            throw new NotFoundException("Найдено запросов меньше, чем было указано.");
+        }
+        for (Request request : requests) {
+            if (!request.getStatus().equals(RequestsStatus.PENDING)) {
+                throw new ConflictException("Статус можно изменить только у заявок, находящихся в состоянии ожидания.");
+            }
+        }
     }
 
     private void validation(EventDtoIn eventDtoIn) {

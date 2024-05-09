@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.events.dto.ChangeRequestsListDto;
 import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.dto.EventDtoFull;
 import ru.practicum.events.dto.EventDtoIn;
 import ru.practicum.events.service.PrivateEventsService;
 import ru.practicum.groupvalid.CreateInfo;
 import ru.practicum.groupvalid.UpdateInfo;
+import ru.practicum.requests.dto.EventRequestStatusUpdateDtoIn;
+import ru.practicum.requests.dto.EventRequestStatusUpdateDtoOut;
 import ru.practicum.requests.dto.RequestDto;
 
 import java.util.List;
@@ -75,11 +76,11 @@ public class PrivateEventsController {
     }
 
     @PatchMapping("/{eventId}/requests")
-    public ResponseEntity<List<RequestDto>> pathEventRequests(@PathVariable Long userId,
-                                                              @PathVariable Long eventId,
-                                                              @RequestBody ChangeRequestsListDto requestsList) {
-        List<RequestDto> result = privateEventsService.changeResultStatus(requestsList, userId, eventId);
-        log.info("Пользователь {} меняет статус для запросов {} на событие {} статус {}", userId, requestsList.getRequestIds(), eventId, requestsList.getStatus());
+    public ResponseEntity<EventRequestStatusUpdateDtoOut> pathEventRequests(@PathVariable Long userId,
+                                                                            @PathVariable Long eventId,
+                                                                            @RequestBody EventRequestStatusUpdateDtoIn requestsList) {
+        EventRequestStatusUpdateDtoOut result = privateEventsService.changeResultStatus(requestsList, userId, eventId);
+        log.info("Пользователь с id = {} меняет для запросов: {} на событие c id = {} статус на {}", userId, requestsList.getRequestIds(), eventId, requestsList.getStatus());
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
