@@ -48,8 +48,8 @@ public class AdminEventsController {
 
     @PatchMapping("/{eventId}")
     public ResponseEntity<EventDtoFull> patchEvent(@PathVariable Long eventId,
-                                                   @RequestBody @Validated(UpdateInfo.class) EventDtoIn EventDto) { //Изменить DTO
-        EventDtoFull result = adminEventsService.patchEvent(eventId, EventDto);
+                                                   @RequestBody @Validated(UpdateInfo.class) EventDtoIn eventDto) {
+        EventDtoFull result = adminEventsService.patchEvent(eventId, eventDto);
         log.info("Обновление события с id = {}", eventId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
