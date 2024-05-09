@@ -99,7 +99,7 @@ public class PublicEventsServiceImpl implements PublicEventsService {
             throw new RuntimeException("Ошибка подключения к серсису статистики");
         }
 
-        EventDtoFull result = EventMapper.toAdminEventDto(event);
+        EventDtoFull result = EventMapper.toEventDtoFull(event);
         if ((view != null) && (view >= 0)) {
             result.setViews(view);
         }

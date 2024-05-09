@@ -29,7 +29,7 @@ public class EventMapper {
                 .build();
     }
 
-    public EventDtoFull toAdminEventDto(Event event) {
+    public EventDtoFull toEventDtoFull(Event event) {
         EventDtoFull result = EventDtoFull.builder()
                 .id(event.getId())
                 .title(event.getTitle())

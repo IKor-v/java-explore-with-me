@@ -20,9 +20,11 @@ import ru.practicum.events.repository.LocationRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
+import ru.practicum.stats.StatsService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,12 +33,14 @@ public class AdminEventsServiceImpl implements AdminEventsService {
     private final EventsRepository eventsRepository;
     private final CategoriesRepository categoriesRepository;
     private final LocationRepository locationRepository;
+    private final StatsService statsService;
 
     @Autowired
-    public AdminEventsServiceImpl(EventsRepository eventsRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository) {
+    public AdminEventsServiceImpl(EventsRepository eventsRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository, StatsService statsService) {
         this.eventsRepository = eventsRepository;
         this.categoriesRepository = categoriesRepository;
         this.locationRepository = locationRepository;
+        this.statsService = statsService;
     }
 
     @Override
@@ -81,7 +85,7 @@ public class AdminEventsServiceImpl implements AdminEventsService {
             }
         }
 
-        return EventMapper.toAdminEventDto(eventsRepository.save(newEvent));
+        return EventMapper.toEventDtoFull(eventsRepository.save(newEvent));
     }
 
     @Override
@@ -89,154 +93,23 @@ public class AdminEventsServiceImpl implements AdminEventsService {
                                         LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> result;
-        int checkParam = getCheckParam(users, states, categories, rangeStart, rangeEnd);
-        switch (checkParam) {
-            case 0: {
-                result = eventsRepository.findAll(pageable).toList();
-                break;
-            }
-            case 1: {
-                result = eventsRepository.findByEventDateBefore(rangeEnd, pageable);
-                break;
-            }
-            case 10: {
-                result = eventsRepository.findByEventDateAfter(rangeStart, pageable);
-                break;
-            }
-            case 11: {
-                result = eventsRepository.findByEventDateBetween(rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 100: {
-                result = eventsRepository.findByCategoryIdIn(categories, pageable);
-                break;
-            }
-            case 101: {
-                result = eventsRepository.findByCategoryIdInAndEventDateBefore(categories, rangeEnd, pageable);
-                break;
-            }
-            case 110: {
-                result = eventsRepository.findByCategoryIdInAndEventDateAfter(categories, rangeStart, pageable);
-                break;
-            }
-            case 111: {
-                result = eventsRepository.findByCategoryIdInAndEventDateBetween(categories, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 1000: {
-                result = eventsRepository.findByStateIn(states, pageable);
-                break;
-            }
-            case 1001: {
-                result = eventsRepository.findByStateInAndEventDateBefore(states, rangeEnd, pageable);
-                break;
-            }
-            case 1010: {
-                result = eventsRepository.findByStateInAndEventDateAfter(states, rangeStart, pageable);
-                break;
-            }
-            case 1011: {
-                result = eventsRepository.findByStateInAndEventDateBetween(states, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 1100: {
-                result = eventsRepository.findByStateInAndCategoryIdIn(states, categories, pageable);
-                break;
-            }
-            case 1101: {
-                result = eventsRepository.findByStateInAndCategoryIdInAndEventDateBefore(states, categories, rangeEnd, pageable);
-                break;
-            }
-            case 1110: {
-                result = eventsRepository.findByStateInAndCategoryIdInAndEventDateAfter(states, categories, rangeStart, pageable);
-                break;
-            }
-            case 1111: {
-                result = eventsRepository.findByStateInAndCategoryIdInAndEventDateBetween(states, categories, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 10000: {
-                result = eventsRepository.findByInitiatorIdIn(users, pageable);
-                break;
-            }
-            case 10001: {
-                result = eventsRepository.findByInitiatorIdInAndEventDateBefore(users, rangeEnd, pageable);
-                break;
-            }
-            case 10010: {
-                result = eventsRepository.findByInitiatorIdInAndEventDateAfter(users, rangeStart, pageable);
-                break;
-            }
-            case 10011: {
-                result = eventsRepository.findByInitiatorIdInAndEventDateBetween(users, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 10100: {
-                result = eventsRepository.findByInitiatorIdInAndCategoryIdIn(users, categories, pageable);
-                break;
-            }
-            case 10101: {
-                result = eventsRepository.findByInitiatorIdInAndCategoryIdInAndEventDateBefore(users, categories, rangeEnd, pageable);
-                break;
-            }
-            case 10110: {
-                result = eventsRepository.findByInitiatorIdInAndCategoryIdInAndEventDateAfter(users, categories, rangeStart, pageable);
-                break;
-            }
-            case 10111: {
-                result = eventsRepository.findByInitiatorIdInAndCategoryIdInAndEventDateBetween(users, categories, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 11000: {
-                result = eventsRepository.findByInitiatorIdInAndStateIn(users, states, pageable);
-                break;
-            }
-            case 11001: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndEventDateBefore(users, states, rangeEnd, pageable);
-                break;
-            }
-            case 11010: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndEventDateAfter(users, states, rangeStart, pageable);
-                break;
-            }
-            case 11011: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndEventDateBetween(users, states, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            case 11100: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndCategoryIdIn(users, states, categories, pageable);
-                break;
-            }
-            case 11101: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBefore(users, states, categories, rangeEnd, pageable);
-                break;
-            }
-            case 11110: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndCategoryIdInAndEventDateAfter(users, states, categories, rangeStart, pageable);
-                break;
-            }
-            case 11111: {
-                result = eventsRepository.findByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(users, states, categories, rangeStart, rangeEnd, pageable);
-                break;
-            }
-            default: {
-                throw new RuntimeException("Ошибка обработки параметров запроса.");
-            }
+        if (states != null) {
+            result = eventsRepository.getEventsForAdmin(users, states.stream().map(Enum::ordinal).collect(Collectors.toList()),
+                    categories, rangeStart, rangeEnd, pageable);
+        } else {
+            result = eventsRepository.getEventsForAdmin(users, null,
+                    categories, rangeStart, rangeEnd, pageable);
         }
+
+        Map<Long, Long> views = statsService.getView(result);
+        ;
 
         return result.stream()
-                .map(EventMapper::toAdminEventDto)
+                .map(EventMapper::toEventDtoFull)
+                .map(a -> {
+                    a.setViews(views.getOrDefault(a.getId(), 0L));
+                    return a;
+                })
                 .collect(Collectors.toList());
-    }
-
-    private int getCheckParam(Object... o) {
-        int result = 0;
-        for (Object obj : o) {
-            if (obj != null) {
-                result++;
-            }
-            result = result * 10;
-        }
-        return result / 10;
     }
 }

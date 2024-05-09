@@ -21,18 +21,13 @@ public class EventDtoFull {
 
     private CategoryDto category;
     private Integer confirmedRequests;
-
-    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String eventDate;
 
     private UserDto initiator;
 
     private Boolean paid;
-    private Long views;
-
-    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Long views = 0L;
     private String createdOn;
-    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String publishedOn;
     private String description;
 

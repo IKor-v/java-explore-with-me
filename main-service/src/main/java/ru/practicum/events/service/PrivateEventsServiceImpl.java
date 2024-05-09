@@ -26,12 +26,14 @@ import ru.practicum.requests.dto.RequestDto;
 import ru.practicum.requests.dto.RequestMapper;
 import ru.practicum.requests.entity.Request;
 import ru.practicum.requests.repository.RequestsRepository;
+import ru.practicum.stats.StatsService;
 import ru.practicum.users.entity.User;
 import ru.practicum.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,22 +44,30 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
     private final UserRepository userRepository;
     private final CategoriesRepository categoriesRepository;
     private final LocationRepository locationRepository;
+    private final StatsService statsService;
 
     @Autowired
-    public PrivateEventsServiceImpl(EventsRepository eventsRepository, RequestsRepository requestsRepository, UserRepository userRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository) {
+    public PrivateEventsServiceImpl(EventsRepository eventsRepository, RequestsRepository requestsRepository, UserRepository userRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository, StatsService statsService) {
         this.eventsRepository = eventsRepository;
         this.requestsRepository = requestsRepository;
         this.userRepository = userRepository;
         this.categoriesRepository = categoriesRepository;
         this.locationRepository = locationRepository;
+        this.statsService = statsService;
     }
 
     @Override
     public List<EventDto> getEventsForUser(Long userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventsRepository.findAll(pageable).toList();
+        Map<Long, Long> views = statsService.getView(events);
+
         return events.stream()
                 .map(EventMapper::toEventDto)
+                .map(a -> {
+                    a.setViews(views.getOrDefault(a.getId(), 0L));
+                    return a;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -67,7 +77,10 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
         if (!event.getInitiator().getId().equals(userId)) {
             throw new NotFoundException("У пользователя с id = " + userId + " не обнаруженно события с id = " + eventId);
         }
-        return EventMapper.toAdminEventDto(event);
+        Map<Long, Long> views = statsService.getView(List.of(event));
+        EventDtoFull result = EventMapper.toEventDtoFull(event);
+        result.setViews(views.getOrDefault(result.getId(), 0L));
+        return result;
     }
 
     @Override
@@ -90,7 +103,7 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
         LocationEvent location = locationRepository.save(LocationMapper.toLocation(eventDtoIn.getLocation()));
         Event event = EventMapper.toEvent(eventDtoIn, category, user);
         event.setLocation(location);
-        return EventMapper.toAdminEventDto(eventsRepository.save(event));
+        return EventMapper.toEventDtoFull(eventsRepository.save(event));
     }
 
     @Override
@@ -136,7 +149,7 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
             }
         }
 
-        return EventMapper.toAdminEventDto(eventsRepository.save(event));
+        return EventMapper.toEventDtoFull(eventsRepository.save(event));
     }
 
 

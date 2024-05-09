@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatDto;
 import ru.practicum.StatDtoOut;
 import ru.practicum.StatServiceClient;
+import ru.practicum.events.dto.EventMapper;
 import ru.practicum.events.entity.Event;
 import ru.practicum.exception.ValidationException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +43,9 @@ public class StatsService {
 
         ObjectMapper mapper = new ObjectMapper();
         Map<Long, Long> views = new HashMap<>();
-        Map<String, LocalDateTime> date = getDateToStart(events);
+        LocalDateTime start = getDateToStart(events);
 
-        if ((date.get("start") == null) || (date.get("end") == null)) {
+        if (start == null) {
             return Map.of();
         }
 
@@ -55,8 +55,8 @@ public class StatsService {
                 })
                 .collect(Collectors.toList());
 
-        ResponseEntity<Object> response = statServiceClient.getStats(date.get("start").format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                date.get("end").format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        ResponseEntity<Object> response = statServiceClient.getStats(start.format(EventMapper.formatter),
+                LocalDateTime.now().plusMinutes(1).format(EventMapper.formatter),
                 uris,
                 true);
         try {
@@ -89,28 +89,21 @@ public class StatsService {
                 .build());
     }
 
-    private Map<String, LocalDateTime> getDateToStart(List<Event> events) {
+    private LocalDateTime getDateToStart(List<Event> events) {
         if ((events == null) || (events.isEmpty())) {
             return null;
         }
-        Map<String, LocalDateTime> result = new HashMap<>();
+        LocalDateTime result = null;
 
         for (Event event : events) {
-            if (result.get("start") == null) {
-                result.put("start", event.getEventDate());
+            if (result == null) {
+                result = event.getCreatedOn();
             }
-            if (result.get("end") == null) {
-                result.put("end", event.getEventDate());
+            if ((result.isAfter(event.getEventDate())) && (event.getCreatedOn() != null)) {
+                result = event.getCreatedOn();
             }
-            if (result.get("start").isAfter(event.getEventDate())) {
-                result.put("start", event.getEventDate());
-            }
-            if (result.get("end").isBefore(event.getEventDate())) {
-                result.put("end", event.getEventDate());
-            }
+
         }
-        result.put("start", result.get("start").minusDays(1));
-        result.put("end", result.get("end").plusDays(1));
 
         return result;
     }
