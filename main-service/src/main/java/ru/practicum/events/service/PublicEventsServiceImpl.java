@@ -61,6 +61,7 @@ public class PublicEventsServiceImpl implements PublicEventsService {
 
         List<EventDto> result;
         try {
+            statsService.addHit(request);
             Map<Long, Long> views = statsService.getView(events);
 
             result = events.stream()

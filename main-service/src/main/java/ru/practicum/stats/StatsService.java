@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-//@Slf4j
+
 public class StatsService {
     private final String appName = "main-service";
     private final String address = "http://localhost:9090";
@@ -102,7 +102,7 @@ public class StatsService {
             if ((result.isAfter(event.getEventDate())) && (event.getCreatedOn() != null)) {
                 result = event.getCreatedOn();
             }
-
+            result = result.minusSeconds(1);
         }
 
         return result;
