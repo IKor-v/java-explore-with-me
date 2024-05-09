@@ -17,7 +17,7 @@ public class StatServiceClient extends BaseClient {
     public StatServiceClient(RestTemplateBuilder templateBuilder) {
         super(
                 templateBuilder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090"))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://stats-server:9090"))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
