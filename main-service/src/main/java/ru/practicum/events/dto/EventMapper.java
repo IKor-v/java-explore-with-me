@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public class EventMapper {
-    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Event toEvent(EventDto eventDto) {
         return Event.builder()
