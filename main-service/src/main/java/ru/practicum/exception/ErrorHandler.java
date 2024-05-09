@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.events.dto.EventMapper;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestControllerAdvice
 public class ErrorHandler {
