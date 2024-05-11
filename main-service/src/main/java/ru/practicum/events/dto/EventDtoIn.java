@@ -18,6 +18,11 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+/**
+ * Краткий dto класс для события. Используется для получения события от пользователя.
+ *
+ * @see ru.practicum.events.entity.Event
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

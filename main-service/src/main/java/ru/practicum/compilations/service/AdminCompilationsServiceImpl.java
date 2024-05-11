@@ -41,7 +41,7 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
             compilationDtoIn.setEvents(new HashSet<>());
         }
 
-        List<Event> eventsInCompilation = eventsRepository.findByIdIn(compilationDtoIn.getEvents());  //получили список событий
+        List<Event> eventsInCompilation = eventsRepository.findByIdIn(compilationDtoIn.getEvents());
 
         if (((eventsInCompilation == null) || eventsInCompilation.isEmpty()) && compilationDtoIn.getEvents().size() != eventsInCompilation.size()) {
             throw new NotFoundException("События, указанные в подборке, не найденны.");
@@ -54,6 +54,7 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
 
     }
 
+
     @Override
     @Transactional
     public CompilationDtoOut patchCompilation(CompilationDtoIn compilation, Long comId) {
@@ -61,7 +62,7 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
         Set<Event> eventsInCompilation;
         Compilation oldCompilation = compilationsRepository.findById(comId).orElseThrow(() -> new ValidationException("Не найденно такой подборки с id = " + comId));
         if (compilation.getEvents() != null) {
-            eventsInCompilation = new HashSet<>(eventsRepository.findByIdIn(compilation.getEvents()));  //получили список событий
+            eventsInCompilation = new HashSet<>(eventsRepository.findByIdIn(compilation.getEvents()));
         } else {
             eventsInCompilation = oldCompilation.getEvents();
         }

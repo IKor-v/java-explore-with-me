@@ -12,6 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Класс сущности локации. Содержит информащию по широте и долготе места проведения события.
+ */
 @Entity
 @Table(name = "locations", schema = "public")
 @Data
@@ -19,11 +22,20 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Builder
 public class LocationEvent {
+    /**
+     * Id номер локации
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    /**
+     * Георграфическая широта локации.
+     */
     @Column(name = "lat")
-    private Float lat;  //Широта
+    private Float lat;
+    /**
+     * Георграфическоая долгота локации.
+     */
     @Column(name = "lon")
-    private Float lon;  //Долгота
+    private Float lon;
 }

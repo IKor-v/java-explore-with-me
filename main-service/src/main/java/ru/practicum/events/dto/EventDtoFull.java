@@ -8,6 +8,11 @@ import ru.practicum.categories.dto.CategoryDto;
 import ru.practicum.events.entity.StateEvent;
 import ru.practicum.users.dto.UserDto;
 
+/**
+ * Полный dto класс для события со всеми данными
+ *
+ * @see ru.practicum.events.entity.Event
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +36,7 @@ public class EventDtoFull {
     private String publishedOn;
     private String description;
 
-    private LocationDto location;  //широта и долгота места
+    private LocationDto location;
     private Integer participantLimit = 0;
     private Boolean requestModeration = true;
     private StateEvent state;

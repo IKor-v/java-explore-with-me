@@ -11,6 +11,11 @@ import ru.practicum.users.dto.UserDto;
 
 import java.time.LocalDateTime;
 
+/**
+ * Средний dto класс для события
+ *
+ * @see ru.practicum.events.entity.Event
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +43,7 @@ public class PrivateEventDto {
     private LocalDateTime publishedOn;
     private String description;
 
-    private LocationDto location;  //широта и долгота места
+    private LocationDto location;
     private Integer participantLimit = 0;
     private Boolean requestModeration = true;
     private StateEvent state;

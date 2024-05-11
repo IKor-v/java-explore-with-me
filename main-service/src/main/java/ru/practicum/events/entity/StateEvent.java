@@ -1,7 +1,19 @@
 package ru.practicum.events.entity;
 
+/**
+ * Enum для актуально статуса события
+ */
 public enum StateEvent {
-    PENDING,        // Ожидает
-    PUBLISHED,      // Опубликован
-    CANCELED        // Отменен
+    /**
+     * Событие в ожидании
+     */
+    PENDING,
+    /**
+     * Событие опубликовано
+     */
+    PUBLISHED,
+    /**
+     * Событие отменено
+     */
+    CANCELED
 }

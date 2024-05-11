@@ -81,7 +81,7 @@ public class PrivateRequestsServiceImpl implements PrivateRequestsService {
     @Transactional
     public RequestDto cancelRequests(Long userId, Long requestId) {
         Request request = repository.findById(requestId).orElseThrow(() -> new ValidationException("Такого запроса с id = " + requestId + " не найденно"));
-        request.setStatus(RequestsStatus.CANCELED); //или REJECTED?
+        request.setStatus(RequestsStatus.CANCELED);
         return RequestMapper.toRequestDto(repository.save(request));
     }
 }

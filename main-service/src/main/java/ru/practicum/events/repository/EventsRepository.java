@@ -52,6 +52,5 @@ public interface EventsRepository extends JpaRepository<Event, Long> {
             "and ((?3 IS NULL) or (e.category.id in ?3)) " +
             "and ((?4 IS NULL) or (e.eventDate >= ?4)) " +
             "and ((?5 IS NULL) or (e.eventDate <= ?5)) ")
-        //"order by e.id")
     List<Event> getEventsForAdmin(List<Long> users, List<Integer> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable);
 }

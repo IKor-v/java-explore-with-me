@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import ru.practicum.categories.dto.CategoryDto;
 import ru.practicum.users.dto.UserDto;
 
+/**
+ * Сокращенный класс dto для события
+ *
+ * @see ru.practicum.events.entity.Event
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -39,24 +39,6 @@ public class CompilationMapper {
                 .build();
     }
 
-    public Compilation updateCompilation(Compilation compilation, CompilationDtoIn compilationDtoIn) {
-        if (compilationDtoIn.getPinned() != null) {
-            compilation.setPinned(compilationDtoIn.getPinned());
-        }
-        if (compilationDtoIn.getTitle() != null) {
-            compilation.setTitle(compilationDtoIn.getTitle());
-        }
-        if (compilationDtoIn.getEvents() != null) {  //Это законно?
-
-/*            Set<Event> events = new HashSet<>();
-            for (Long idEvent :compilationDtoIn.getEvents()){
-                events.add(Event.builder().id(idEvent).build());
-            }
-            compilation.setEvents(events);*/
-        }
-        return compilation;
-    }
-
     public Compilation updateCompilation(Compilation compilation, CompilationDtoIn compilationDtoIn, Set<Event> events) {
         if (compilationDtoIn.getPinned() != null) {
             compilation.setPinned(compilationDtoIn.getPinned());

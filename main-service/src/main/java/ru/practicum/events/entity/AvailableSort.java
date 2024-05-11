@@ -1,6 +1,15 @@
 package ru.practicum.events.entity;
 
+/**
+ * Enum для определения способа сортировки запросов из доступных вариантов
+ */
 public enum AvailableSort {
-    EVENT_DATE, //по дате
-    VIEWS       // по просмотрам
+    /**
+     * Сортировка по дате создания
+     */
+    EVENT_DATE,
+    /**
+     * Сортировка по количеству просмотров
+     */
+    VIEWS
 }

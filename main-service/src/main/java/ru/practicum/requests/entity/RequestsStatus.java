@@ -1,9 +1,23 @@
 package ru.practicum.requests.entity;
 
+/**
+ * Список возможных статусов для запроса
+ */
 public enum RequestsStatus {
-
-    PENDING,    //В ожидании
-    CONFIRMED,  //Подтвержден
-    CANCELED,   //Отменен
-    REJECTED    //Отозван
+    /**
+     * Запрос в ожидании
+     */
+    PENDING,
+    /**
+     * Запрос подтвержден
+     */
+    CONFIRMED,
+    /**
+     * Запрос отменен
+     */
+    CANCELED,
+    /**
+     * Запрос отозван
+     */
+    REJECTED
 }
