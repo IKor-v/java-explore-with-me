@@ -18,7 +18,7 @@ public class StatServiceClient extends BaseClient {
     public StatServiceClient(@Value("${statsService.url}") String url,  RestTemplateBuilder templateBuilder) {
         super(
                 templateBuilder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(url))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(/*url */"http://stats-server:9090"))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
