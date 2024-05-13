@@ -29,7 +29,7 @@ public class StatServerController {
 
     }
 
-    @GetMapping("/stats")   // stats?start="2024-01-01 01:01:01"&end="2025-01-01 01:01:01"
+    @GetMapping("/stats")
     public ResponseEntity<List<StatDtoOut>> getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                                      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                      @RequestParam(defaultValue = "") List<String> uris,

@@ -31,10 +31,10 @@ services:
 
 
 
-  ewm-service:
+  main-service:
     build: main-service
     image: explore-with-me-main-service
-    container_name: ewm-service
+    container_name: main-service
     ports:
       - "8080:8080"
     depends_on:

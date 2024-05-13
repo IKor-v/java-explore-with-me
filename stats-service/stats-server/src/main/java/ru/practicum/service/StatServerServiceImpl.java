@@ -7,9 +7,9 @@ import ru.practicum.StatDto;
 import ru.practicum.StatDtoOut;
 import ru.practicum.entity.Stat;
 import ru.practicum.entity.StatMapper;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.repository.StatsRepository;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
