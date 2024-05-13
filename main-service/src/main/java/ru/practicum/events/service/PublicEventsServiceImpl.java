@@ -4,6 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.comments.dto.CommentDtoCount;
+import ru.practicum.comments.dto.CommentMapper;
+import ru.practicum.comments.entity.Comment;
+import ru.practicum.comments.repository.CommentsRepository;
 import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.dto.EventDtoFull;
 import ru.practicum.events.dto.EventMapper;
@@ -17,21 +22,25 @@ import ru.practicum.stats.StatsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class PublicEventsServiceImpl implements PublicEventsService {
     private final EventsRepository eventsRepository;
     private final LocationRepository locationRepository;
     private final StatsService statsService;
+    private final CommentsRepository commentsRepository;
 
     @Autowired
-    public PublicEventsServiceImpl(EventsRepository eventsRepository, LocationRepository locationRepository, StatsService statsService) {
+    public PublicEventsServiceImpl(EventsRepository eventsRepository, LocationRepository locationRepository, StatsService statsService, CommentsRepository commentsRepository) {
         this.eventsRepository = eventsRepository;
         this.locationRepository = locationRepository;
         this.statsService = statsService;
+        this.commentsRepository = commentsRepository;
     }
 
     @Override
@@ -60,6 +69,7 @@ public class PublicEventsServiceImpl implements PublicEventsService {
         }
 
         List<EventDto> result;
+        List<CommentDtoCount> commentDtoCount = commentsRepository.countGroupByEventId();
         try {
             statsService.addHit(request);
             Map<Long, Long> views = statsService.getView(events);
@@ -73,10 +83,21 @@ public class PublicEventsServiceImpl implements PublicEventsService {
                     .peek(a -> {
                         statsService.addHit(request, a.getId());
                     })
+                    .map(a -> {
+                        List<Long> countComments = new ArrayList<>();
+                        for (CommentDtoCount count : commentDtoCount) {
+                            if (a.getId().equals(count.getEventId())) {
+                                countComments.add(count.getCountComments());
+                            }
+                        }
+                        a.setComments(countComments);
+                        return a;
+                    })
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Ошибка подключения к серсису статистики");
         }
+
         return result;
     }
 
@@ -103,6 +124,11 @@ public class PublicEventsServiceImpl implements PublicEventsService {
         EventDtoFull result = EventMapper.toEventDtoFull(event);
         if ((view != null) && (view >= 0)) {
             result.setViews(view);
+        }
+
+        List<Comment> comments = commentsRepository.findByEventId(result.getId());
+        if (comments != null) {
+            result.setComments(comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList()));
         }
         return result;
 

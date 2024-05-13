@@ -11,6 +11,7 @@ import ru.practicum.users.entity.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @UtilityClass
 public class EventMapper {
@@ -43,6 +44,8 @@ public class EventMapper {
                 .location(LocationMapper.toLocationDto(event.getLocation()))
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .initiator(UserMapper.toUserDto(event.getInitiator()))
+                .views(0L)
+                .comments(List.of())
                 .build();
 
 

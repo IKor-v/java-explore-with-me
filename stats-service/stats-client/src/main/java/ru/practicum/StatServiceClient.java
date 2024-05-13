@@ -1,12 +1,14 @@
 package ru.practicum;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +16,10 @@ import java.util.Map;
 @Service
 public class StatServiceClient extends BaseClient {
     @Autowired
-    public StatServiceClient(RestTemplateBuilder templateBuilder) {
+    public StatServiceClient(@Value("${statsService.url}") String url,  RestTemplateBuilder templateBuilder) {
         super(
                 templateBuilder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://stats-server:9090"))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(url))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
