@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.comments.dto.CommentDto;
 import ru.practicum.comments.dto.CommentDtoIn;
 import ru.practicum.comments.dto.CommentMapper;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class PrivateCommentsServiceImpl implements PrivateCommentsService {
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
@@ -35,6 +37,7 @@ public class PrivateCommentsServiceImpl implements PrivateCommentsService {
         this.eventsRepository = eventsRepository;
     }
 
+    @Transactional
     @Override
     public CommentDto postComment(Long userId, Long eventId, CommentDtoIn commentDtoIn) {
         validation(commentDtoIn);
@@ -46,6 +49,7 @@ public class PrivateCommentsServiceImpl implements PrivateCommentsService {
         return CommentMapper.toCommentDto(commentsRepository.save(CommentMapper.toComment(commentDtoIn, user, event)));
     }
 
+    @Transactional
     @Override
     public CommentDto patchComment(Long userId, Long comId, CommentDtoIn commentDtoIn) {
         validation(commentDtoIn);
@@ -79,6 +83,7 @@ public class PrivateCommentsServiceImpl implements PrivateCommentsService {
         return comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void delCommentById(Long userId, Long comId) {
         Comment comment = commentsRepository.findById(comId).orElseThrow(() -> new NotFoundException("Не найден комментарий с id = " + comId));

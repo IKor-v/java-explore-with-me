@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +27,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequestMapping(path = "/comments/user/{userId}")
+@Validated
 public class PrivateCommentsController {
     private final PrivateCommentsService commentsService;
 
@@ -39,7 +41,7 @@ public class PrivateCommentsController {
                                                   @PathVariable @PositiveOrZero Long eventId,
                                                   @RequestBody @Valid CommentDtoIn commentDtoIn) {
         CommentDto commentDto = commentsService.postComment(userId, eventId, commentDtoIn);
-        log.info("Пользователь {} добавляет комментарий для события с id = {eventId}", userId, eventId);
+        log.info("Пользователь {} добавляет комментарий для события с id = {}", userId, eventId);
         return ResponseEntity.status(HttpStatus.CREATED).body(commentDto);
     }
 

@@ -2,8 +2,10 @@ package ru.practicum.requests.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.events.entity.Event;
 import ru.practicum.users.entity.User;
 
@@ -19,7 +21,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,12 +30,14 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private RequestsStatus status = RequestsStatus.PENDING;
     @Column(name = "created")
     private LocalDateTime created = LocalDateTime.now();
-    @OneToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     private Event event;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     private User requester;
 }

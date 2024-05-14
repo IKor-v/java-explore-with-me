@@ -2,8 +2,10 @@ package ru.practicum.comments.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.events.entity.Event;
 import ru.practicum.users.entity.User;
 
@@ -19,7 +21,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments", schema = "public")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,12 +30,14 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "text")
+    @Column(name = "text", nullable = false)
     private String text;
-    @Column(name = "created_on")
+    @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn = LocalDateTime.now();
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User creator;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Event event;
 }
