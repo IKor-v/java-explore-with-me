@@ -1,4 +1,4 @@
-package ru.practicum.requests.entity;
+package ru.practicum.comments.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,29 +15,29 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "requests")
+@Table(name = "comments", schema = "public")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Request {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "status", nullable = false)
-    private RequestsStatus status = RequestsStatus.PENDING;
-    @Column(name = "created")
-    private LocalDateTime created = LocalDateTime.now();
+    @Column(name = "text", nullable = false)
+    private String text;
+    @Column(name = "created_on", nullable = false)
+    private LocalDateTime createdOn = LocalDateTime.now();
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User creator;
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Event event;
-    @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    private User requester;
 }

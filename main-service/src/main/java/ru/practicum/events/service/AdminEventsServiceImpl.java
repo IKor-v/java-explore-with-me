@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.categories.entity.Category;
 import ru.practicum.categories.repository.CategoriesRepository;
+import ru.practicum.comments.dto.CommentDto;
+import ru.practicum.comments.dto.CommentMapper;
+import ru.practicum.comments.entity.Comment;
+import ru.practicum.comments.repository.CommentsRepository;
 import ru.practicum.events.dto.EventDtoFull;
 import ru.practicum.events.dto.EventDtoIn;
 import ru.practicum.events.dto.EventMapper;
@@ -23,6 +27,7 @@ import ru.practicum.exception.ValidationException;
 import ru.practicum.stats.StatsService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,13 +39,15 @@ public class AdminEventsServiceImpl implements AdminEventsService {
     private final CategoriesRepository categoriesRepository;
     private final LocationRepository locationRepository;
     private final StatsService statsService;
+    private final CommentsRepository commentsRepository;
 
     @Autowired
-    public AdminEventsServiceImpl(EventsRepository eventsRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository, StatsService statsService) {
+    public AdminEventsServiceImpl(EventsRepository eventsRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository, StatsService statsService, CommentsRepository commentsRepository) {
         this.eventsRepository = eventsRepository;
         this.categoriesRepository = categoriesRepository;
         this.locationRepository = locationRepository;
         this.statsService = statsService;
+        this.commentsRepository = commentsRepository;
     }
 
     @Override
@@ -102,12 +109,22 @@ public class AdminEventsServiceImpl implements AdminEventsService {
         }
 
         Map<Long, Long> views = statsService.getView(result);
-        ;
+        List<Comment> comments = commentsRepository.findAll();
 
         return result.stream()
                 .map(EventMapper::toEventDtoFull)
                 .map(a -> {
                     a.setViews(views.getOrDefault(a.getId(), 0L));
+                    return a;
+                })
+                .map(a -> {
+                    List<CommentDto> commentsList = new ArrayList<>();
+                    for (Comment comment : comments) {
+                        if (a.getId().equals(comment.getEvent().getId())) {
+                            commentsList.add(CommentMapper.toCommentDto(comment));
+                        }
+                    }
+                    a.setComments(commentsList);
                     return a;
                 })
                 .collect(Collectors.toList());

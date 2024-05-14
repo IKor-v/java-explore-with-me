@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import ru.practicum.categories.dto.CategoryDto;
 import ru.practicum.users.dto.UserDto;
 
+import java.util.List;
+
 /**
  * Сокращенный класс dto для события
  *
@@ -26,4 +28,5 @@ public class EventDto {
     private UserDto initiator;
     private Boolean paid;
     private Long views;
+    private List<Long> comments;
 }

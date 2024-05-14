@@ -2,8 +2,9 @@ package ru.practicum.categories.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "categories", schema = "public")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,6 +24,6 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "category_name")
+    @Column(name = "category_name", nullable = false)
     private String name;
 }

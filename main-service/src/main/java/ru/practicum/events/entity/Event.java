@@ -2,8 +2,10 @@ package ru.practicum.events.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.categories.entity.Category;
 import ru.practicum.users.entity.User;
 
@@ -19,7 +21,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events", schema = "public")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,12 +39,12 @@ public class Event {
     /**
      * Поле заголовка события
      */
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
     /**
      * Поле кратного описания события
      */
-    @Column(name = "annotation")
+    @Column(name = "annotation", nullable = false)
     private String annotation;
     /**
      * Поле колличества подтвержденных запросов на участие в событии
@@ -61,18 +64,20 @@ public class Event {
     /**
      * Поле категории события. Хранит категорию
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Category category;
     /**
      * Поле создателя события. Хранит пользователя
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User initiator;
 
     /**
      * Поле даты-времени создания события, конечный вид соответсвует паттерну "yyyy-MM-dd HH:mm:ss"
      */
-    @Column(name = "created_on")
+    @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;
     /**
      * Поле даты-времени публикации события, которое может быть null для неопубликованного события.
@@ -90,7 +95,8 @@ public class Event {
      *
      * @see LocationEvent
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private LocationEvent location;
     /**
      * Поле ограничения количества участников. По умолчанию равно 0, т.е. не ограничено.
@@ -107,7 +113,7 @@ public class Event {
      *
      * @see StateEvent
      */
-    @Column(name = "state")
+    @Column(name = "state", nullable = false)
     private StateEvent state;
 
 }

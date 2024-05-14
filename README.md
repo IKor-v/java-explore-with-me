@@ -1,2 +1,5 @@
-# java-explore-with-me
-Template repository for ExploreWithMe project.
+# java-explore-with-me 
+Приложение-афиша для событий, с возможностью отправлять запросы на участие и оставлять комментарии к событиям.
+
+Ссылка на пул реквест: 
+https://github.com/IKor-v/java-explore-with-me/pull/4

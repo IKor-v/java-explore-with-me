@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.categories.entity.Category;
 import ru.practicum.categories.repository.CategoriesRepository;
+import ru.practicum.comments.dto.CommentDtoCount;
+import ru.practicum.comments.dto.CommentMapper;
+import ru.practicum.comments.entity.Comment;
+import ru.practicum.comments.repository.CommentsRepository;
 import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.dto.EventDtoFull;
 import ru.practicum.events.dto.EventDtoIn;
@@ -47,15 +51,17 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
     private final CategoriesRepository categoriesRepository;
     private final LocationRepository locationRepository;
     private final StatsService statsService;
+    private final CommentsRepository commentsRepository;
 
     @Autowired
-    public PrivateEventsServiceImpl(EventsRepository eventsRepository, RequestsRepository requestsRepository, UserRepository userRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository, StatsService statsService) {
+    public PrivateEventsServiceImpl(EventsRepository eventsRepository, RequestsRepository requestsRepository, UserRepository userRepository, CategoriesRepository categoriesRepository, LocationRepository locationRepository, StatsService statsService, CommentsRepository commentsRepository) {
         this.eventsRepository = eventsRepository;
         this.requestsRepository = requestsRepository;
         this.userRepository = userRepository;
         this.categoriesRepository = categoriesRepository;
         this.locationRepository = locationRepository;
         this.statsService = statsService;
+        this.commentsRepository = commentsRepository;
     }
 
     @Override
@@ -63,11 +69,22 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventsRepository.findAll(pageable).toList();
         Map<Long, Long> views = statsService.getView(events);
+        List<CommentDtoCount> commentDtoCount = commentsRepository.countGroupByEventId();
 
         return events.stream()
                 .map(EventMapper::toEventDto)
                 .map(a -> {
                     a.setViews(views.getOrDefault(a.getId(), 0L));
+                    return a;
+                })
+                .map(a -> {
+                    List<Long> countComments = new ArrayList<>();
+                    for (CommentDtoCount count : commentDtoCount) {
+                        if (a.getId().equals(count.getEventId())) {
+                            countComments.add(count.getCountComments());
+                        }
+                    }
+                    a.setComments(countComments);
                     return a;
                 })
                 .collect(Collectors.toList());
@@ -82,6 +99,10 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
         Map<Long, Long> views = statsService.getView(List.of(event));
         EventDtoFull result = EventMapper.toEventDtoFull(event);
         result.setViews(views.getOrDefault(result.getId(), 0L));
+        List<Comment> comments = commentsRepository.findByEventId(result.getId());
+        if (comments != null) {
+            result.setComments(comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList()));
+        }
         return result;
     }
 
